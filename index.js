@@ -123,4 +123,8 @@ app.post('/api/auth/login', async (req, res, next) => {
     }
 })
 
+app.get('/', (req, res) => {
+    res.send('OK')
+})
+
 app.listen(3000)
