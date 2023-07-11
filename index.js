@@ -18,6 +18,7 @@ const TokenSigningKey = env.get("TOKEN_SIGNING_KEY").required(true).asString()
 const AccessTokenExpiration = env.get("ACCESS_TOKEN_EXPIRATION").required(true).default("9000s").asString()
 const RefreshTokenExpiration = env.get("REFRESH_TOKEN_EXPIRATION").required(true).default("604800s").asString()
 const CertsEndpoint = env.get("OAUTH2_CERTS_ENDPOINT").required(true).asString()
+const ThingsboardAuthUrl = env.get("THINGSBOARD_AUTH_URL").required(true).asString()
 
 const fetchCerts = async () => {
     const response = await fetch(CertsEndpoint)
@@ -107,7 +108,7 @@ app.post('/api/auth/login', async (req, res, next) => {
             res.json(await generateTokens(decodedJwt.payload.email))
         } else {
             request.post({
-                url: 'http://192-168-178-60.nip.io/api/auth/login',
+                url: ThingsboardAuthUrl,
                 body: req.body,
                 json: true
             }).pipe(res)
