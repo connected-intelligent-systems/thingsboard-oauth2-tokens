@@ -1,6 +1,6 @@
 {
   "name": "thingsboard-oauth2-tokens",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Small service that generates api tokens for thingsboard for oauth2 users",
   "main": "index.js",
   "type": "module",
