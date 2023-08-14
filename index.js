@@ -74,19 +74,21 @@ const generateTokens = async (email) => {
   }
 
   const [user] = users.rows
+  const sessionId = v4()
 
   return {
-    token: generateAccessToken(user),
-    refreshToken: generateRefreshToken(user),
+    token: generateAccessToken(user, sessionId),
+    refreshToken: generateRefreshToken(user, sessionId),
     scope: null
   }
 }
 
-const generateRefreshToken = (user) => {
+const generateRefreshToken = (user, sessionId) => {
   return jwt.sign(
     {
       userId: user.id,
       scopes: ['REFRESH_TOKEN'],
+      sessionId,
       isPublic: false
     },
     TokenSigningKey,
@@ -99,11 +101,12 @@ const generateRefreshToken = (user) => {
   )
 }
 
-const generateAccessToken = (user) => {
+const generateAccessToken = (user, sessionId) => {
   return jwt.sign(
     {
       userId: user.id,
       scopes: [user.authority],
+      sessionId,
       enabled: true,
       isPublic: false,
       tenantId: user.tenant_id,
