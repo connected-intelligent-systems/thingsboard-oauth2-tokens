@@ -107,7 +107,7 @@ const generateAccessToken = (user, sessionId) => {
       userId: user.id,
       scopes: [user.authority],
       sessionId,
-      enabled: false,
+      enabled: true,
       isPublic: false,
       tenantId: user.tenant_id,
       customerId: user.customer_id
