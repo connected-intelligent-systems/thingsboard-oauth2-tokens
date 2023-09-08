@@ -125,6 +125,7 @@ const generateAccessToken = (user, sessionId) => {
 }
 
 const getEmail = (decodedJwt, tenantName) => {
+  console.log(decodedJwt, tenantName)
   if (decodedJwt.payload.realm_access.roles.includes(`${tenantName}-admin`)) {
     return `admin-${tenantName}-${decodedJwt.payload.email}`
   } else if (
