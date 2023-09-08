@@ -66,6 +66,8 @@ const certs = await fetchCerts()
 app.use(express.json())
 
 const generateTokens = async (email) => {
+  // TODO: query using tenant prefix
+  // TODO: add virtual service in tenant namespace
   const users = await pool.query('SELECT * FROM tb_user WHERE email = $1', [
     email
   ])
@@ -122,6 +124,16 @@ const generateAccessToken = (user, sessionId) => {
   )
 }
 
+const getEmail = (decodedJwt, tenantName) => {
+  if (decodedJwt.payload.realm_access.roles.includes(`${tenantName}-admin`)) {
+    return `admin-${tenantName}-${decodedJwt.payload.email}`
+  } else if (
+    decodedJwt.payload.realm_access.roles.includes(`${tenantName}-user`)
+  ) {
+    return `user-${tenantName}-${decodedJwt.payload.email}`
+  }
+}
+
 app.post('/api/auth/login', async (req, res, next) => {
   try {
     const { username, password: accessToken } = req.body
@@ -137,7 +149,12 @@ app.post('/api/auth/login', async (req, res, next) => {
 
       jwt.verify(accessToken, jwkToPem(jwk))
 
-      res.json(await generateTokens(decodedJwt.payload.email))
+      const email = getEmail(decodedJwt, req.headers['x-tenant-name'])
+      if (email === undefined) {
+        return res.status(403).send('Authentication failed')
+      }
+
+      res.json(await generateTokens(email))
     } else {
       request
         .post({
