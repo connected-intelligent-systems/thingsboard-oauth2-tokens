@@ -8,6 +8,7 @@ import { v4 } from 'uuid'
 import env from 'env-var'
 import 'dotenv/config'
 import request from 'request'
+import crypto from 'crypto'
 
 const PostgresUsername = env
   .get('POSTGRES_USER')
@@ -124,14 +125,21 @@ const generateAccessToken = (user, sessionId) => {
   )
 }
 
+const hashEmail = (email, tenantName, role) => {
+  const hash = crypto
+    .createHash('shake256', { outputLength: 8 })
+    .update(`${role}-${tenantName}-${email}`)
+    .digest('hex')
+  return `${hash}@thingsboard.local`
+}
+
 const getEmail = (decodedJwt, tenantName) => {
-  console.log(decodedJwt, tenantName)
   if (decodedJwt.payload.realm_access.roles.includes(`${tenantName}-admin`)) {
-    return `admin-${tenantName}-${decodedJwt.payload.email}`
+    return hashEmail(decodedJwt.payload.email, tenantName, 'admin')
   } else if (
     decodedJwt.payload.realm_access.roles.includes(`${tenantName}-user`)
   ) {
-    return `user-${tenantName}-${decodedJwt.payload.email}`
+    return hashEmail(decodedJwt.payload.email, tenantName, 'user')
   }
 }
 
