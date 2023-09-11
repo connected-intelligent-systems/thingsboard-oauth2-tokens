@@ -67,6 +67,8 @@ const certs = await fetchCerts()
 app.use(express.json())
 
 const generateTokens = async (email) => {
+  // TODO: query using tenant prefix
+  // TODO: add virtual service in tenant namespace
   const users = await pool.query('SELECT * FROM tb_user WHERE email = $1', [
     email
   ])
@@ -132,12 +134,12 @@ const hashEmail = (email, tenantName, role) => {
 }
 
 const getEmail = (decodedJwt, tenantName) => {
-  if (decodedJwt.payload.groups.includes(`/${tenantName}/admin`)) {
+  if (decodedJwt.payload.realm_access.roles.includes(`${tenantName}-admin`)) {
     return hashEmail(decodedJwt.payload.email, tenantName, 'admin')
   } else if (
-    decodedJwt.payload.groups.roles.includes(`/${tenantName}/customer`)
+    decodedJwt.payload.realm_access.roles.includes(`${tenantName}-user`)
   ) {
-    return hashEmail(decodedJwt.payload.email, tenantName, 'customer')
+    return hashEmail(decodedJwt.payload.email, tenantName, 'user')
   }
 }
 
