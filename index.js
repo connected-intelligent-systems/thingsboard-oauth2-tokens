@@ -67,8 +67,6 @@ const certs = await fetchCerts()
 app.use(express.json())
 
 const generateTokens = async (email) => {
-  // TODO: query using tenant prefix
-  // TODO: add virtual service in tenant namespace
   const users = await pool.query('SELECT * FROM tb_user WHERE email = $1', [
     email
   ])
