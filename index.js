@@ -170,6 +170,7 @@ app.post('/api/auth/login', async (req, res, next) => {
         .pipe(res)
     }
   } catch (e) {
+    console.log(e)
     return res.status(401).json({
       status: 401,
       message: 'Invalid username or password',
