@@ -1,5 +1,3 @@
-'use strict'
-
 import express from 'express'
 import pg from 'pg'
 import jwt from 'jsonwebtoken'
@@ -51,6 +49,8 @@ const fetchCerts = async () => {
   const response = await fetch(CertsEndpoint)
   if (response.ok) {
     return response.json()
+  } else {
+    throw new Error('Invalid response from certification endpoint')
   }
 }
 
