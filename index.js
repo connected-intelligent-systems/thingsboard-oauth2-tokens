@@ -134,8 +134,12 @@ const hashEmail = (email, tenantName, role) => {
 const getEmail = (decodedJwt, tenantName) => {
   if (decodedJwt.payload.realm_access.roles.includes('admin')) {
     return hashEmail(decodedJwt.payload.email, tenantName, 'admin')
-  } else if (decodedJwt.payload.realm_access.roles.includes('user')) {
-    return hashEmail(decodedJwt.payload.email, tenantName, 'user')
+  } else if (decodedJwt.payload.realm_access.roles.includes('customer')) {
+    return hashEmail(
+      decodedJwt.payload.email,
+      tenantName,
+      decodedJwt.payload.customer_id
+    )
   }
 }
 
