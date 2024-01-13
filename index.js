@@ -7,23 +7,7 @@ import env from 'env-var'
 import 'dotenv/config'
 import request from 'request'
 
-const PostgresUsername = env
-  .get('POSTGRES_USER')
-  .required(true)
-  .default('postgres')
-  .asString()
-const PostgresPassword = env.get('POSTGRES_SECRET').required(true).asString()
-const PostgresHost = env.get('POSTGRES_HOST').required(true).asString()
-const PostgresPort = env
-  .get('POSTGRES_PORT')
-  .required(true)
-  .default('5432')
-  .asPortNumber()
-const PostgresDatabase = env
-  .get('POSTGRES_DATABASE')
-  .required(true)
-  .default('thingsboard')
-  .asString()
+const PostgresUrl = env.get('POSTGRES_URL').required(true).asString()
 const TokenSigningKey = env.get('TOKEN_SIGNING_KEY').required(true).asString()
 const AccessTokenExpiration = env
   .get('ACCESS_TOKEN_EXPIRATION')
@@ -54,11 +38,7 @@ const fetchCerts = async () => {
 }
 
 const pool = new pg.Pool({
-  user: PostgresUsername,
-  password: PostgresPassword,
-  host: PostgresHost,
-  database: PostgresDatabase,
-  port: PostgresPort
+  connectionString: PostgresUrl
 })
 const app = express()
 const certs = await fetchCerts()
