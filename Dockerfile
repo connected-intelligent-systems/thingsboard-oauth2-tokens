@@ -2,6 +2,9 @@ FROM node:20.11.0-alpine3.18
 
 RUN apk --no-cache add curl
 
+RUN adduser  -D user -u 2011
+
+
 WORKDIR /app
 
 COPY package.json .
